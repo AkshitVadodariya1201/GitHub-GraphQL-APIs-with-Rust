@@ -188,7 +188,7 @@ impl Mutation {
         let response = response(serde_json::Value::String(mutation)).await.unwrap();
 
         if response.status().is_success() {
-            let response_json: serde_json::Value = response.json().await?;
+            let _response_json: serde_json::Value = response.json().await?;
           //  Handle the response and return the appropriate result
             Ok("Add label successfully".to_string())
         } else {

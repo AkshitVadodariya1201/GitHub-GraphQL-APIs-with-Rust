@@ -5,7 +5,7 @@ use async_graphql::{
 use async_graphql_rocket::GraphQLQuery;
 use async_graphql_rocket::GraphQLRequest;
 use async_graphql_rocket::GraphQLResponse;
-use github_issue::handler::{ProjectSchema, mutation::Mutation, query::Query};
+use github_issue::handler::{mutation::Mutation, query::Query, ProjectSchema};
 use rocket::{response::content, routes, State};
 
 #[rocket::get("/graphql?<query..>")]
