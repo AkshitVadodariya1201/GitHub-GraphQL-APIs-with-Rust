@@ -13,7 +13,9 @@ pub struct Mutation;
 
 #[Object]
 impl Mutation {
+    // Define the create_issue mutation
     async fn create_issue(&self, input: CreateIssue) -> FieldResult<Issue> {
+        // Define the create_issue mutation
         let mutation = r#"
             mutation CreateIssue($input: CreateIssueInput!) {
               createIssue(input: $input) {
@@ -28,6 +30,7 @@ impl Mutation {
             }
         "#;
 
+        // Define the variables for the create_issue mutation
         let variables = json!({
             "input": {
                 "repositoryId": input.repositoryid,
@@ -36,13 +39,16 @@ impl Mutation {
             }
         });
 
+        // Define the request body
         let request_body = json!({
             "query": mutation,
             "variables": variables,
         });
 
+        // Send the request to the GitHub GraphQL API
         let response = response(request_body).await.unwrap();
 
+        // Handle the response from the GitHub GraphQL API
         if response.status().is_success() {
             let response_json: serde_json::Value = response.json().await?;
             let new_issue: Issue =
@@ -55,7 +61,9 @@ impl Mutation {
         }
     }
 
+    // Define the update_issue mutation
     async fn update_issue(&self, input: UpdateIssue) -> FieldResult<Issue> {
+        // Define the update_issue mutation
         let mutation = r#"
             mutation UpdateIssue($input: UpdateIssueInput!) {
               updateIssue(input: $input) {
@@ -70,6 +78,7 @@ impl Mutation {
             }
         "#;
 
+        // Define the variables for the update_issue mutation
         let variables = json!({
             "input": {
                 "id": input.issueid,
@@ -78,13 +87,16 @@ impl Mutation {
             }
         });
 
+        // Define the request body
         let request_body = json!({
             "query": mutation,
             "variables": variables,
         });
 
+        // Send the request to the GitHub GraphQL API
         let response = response(request_body).await.unwrap();
 
+        // Handle the response from the GitHub GraphQL API
         if response.status().is_success() {
             let response_json: serde_json::Value = response.json().await?;
             let updated_issue: Issue =
@@ -97,11 +109,13 @@ impl Mutation {
         }
     }
 
+    // Define the delete_issue mutation
     async fn delete_issue(
         &self,
         _ctx: &Context<'_>,
         input: DeleteIssue,
     ) -> FieldResult<ClientMutationId> {
+        // Define the delete_issue mutation
         let mutation = json!(format!(
             r#"
             mutation {{
@@ -116,7 +130,10 @@ impl Mutation {
             input.issue_id
         ));
 
+        // Send the request to the GitHub GraphQL API
         let response = response(mutation).await.unwrap();
+
+        // Handle the response from the GitHub GraphQL API
         if response.status().is_success() {
             println!("Issue deleted successfully");
             Ok(ClientMutationId {
@@ -128,7 +145,9 @@ impl Mutation {
         }
     }
 
+    // Define the close_issue mutation
     async fn close_issue(&self, input: FetchIssue) -> FieldResult<String> {
+        // Define the close_issue mutation
         let mutation = r#"
             mutation CloseIssue($input: CloseIssueInput!) {
                 closeIssue(input: $input) {
@@ -137,19 +156,23 @@ impl Mutation {
             }
         "#;
 
+        // Define the variables for the close_issue mutation
         let variables = json!({
             "input" : {
                 "issueId" : input.issue_id,
             }
         });
 
+        // Define the request body
         let request_body = json!({
             "query": mutation,
             "variables": variables,
         });
 
+        // Send the request to the GitHub GraphQL API
         let response = response(request_body).await.unwrap();
 
+        // Handle the response from the GitHub GraphQL API
         if response.status().is_success() {
             //let response_json: serde_json::Value = response.json().await?;
             // Handle the response and return the appropriate result
@@ -160,10 +183,9 @@ impl Mutation {
         }
     }
 
-    async fn add_label_to_issue(
-        &self,
-        input: AddLabelsToLabelable,
-    ) -> FieldResult<String> {
+    // Define the add_label_to_issue mutation
+    async fn add_label_to_issue(&self, input: AddLabelsToLabelable) -> FieldResult<String> {
+        // Define the add_label_to_issue mutation
         let mutation = format!(
             r#"mutation {{
                 addLabelsToLabelable(input: {{
@@ -185,11 +207,14 @@ impl Mutation {
             }}"#,
             input.issue_id, input.label_ids[0]
         );
+
+        // Send the request to the GitHub GraphQL API
         let response = response(serde_json::Value::String(mutation)).await.unwrap();
 
+        // Handle the response from the GitHub GraphQL API
         if response.status().is_success() {
             let _response_json: serde_json::Value = response.json().await?;
-          //  Handle the response and return the appropriate result
+            //  Handle the response and return the appropriate result
             Ok("Add label successfully".to_string())
         } else {
             let error_message = response.text().await?;
